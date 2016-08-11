@@ -1,6 +1,10 @@
 ### ngSinaEmoji
 整合新浪远程表情组件
 ####Useage
+
+```js
+$ npm install ngSinaEmoji
+```
 ```js
 var Demo = angular.module('Demo',['ngSinaEmoji'])
 ```

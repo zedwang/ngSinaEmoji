@@ -5,9 +5,17 @@
         "type": "git",
         "url": "https://github.com/zedwang/ngSinaEmoji.git"
     },
+    "authors": [
+        "Zed <343650735@qq.com>"
+    ],
     "engines": {
         "node": ">=4"
     },
+    "keywords": [
+        "angular",
+        "emoji"
+    ],
+    "description": "sina emoji components of Angular",
     "devDependencies": {
         "babel-core": "^6.4.0",
         "babel-preset-es2015": "^6.3.13",
