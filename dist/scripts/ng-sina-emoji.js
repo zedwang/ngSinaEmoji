@@ -21,8 +21,8 @@
                         appKey: '1362404091'
                     };
                     var options = $.extend({}, defaults, scope);
-
                     $(scope.target).click(function (ev) {
+                        console.log($(this).offset())
                         ev.stopPropagation();
                         SinaEmojiService.show(this,options,function (res) {
                             SinaEmojiService.insertText(elem[0],res,ctrl);
@@ -46,8 +46,8 @@
                     var emotions = new Array();
                     var categorys = new Array();
                     var styles = {
-                        top: $(elem)[0].offsetTop + $(elem).height() + 8, 
-                        left: $(elem)[0].offsetLeft
+                        top: $(elem).offset().top + $(elem).height() + 8,
+                        left: $(elem).offset().left
                     }
 
                     if ($('#emotions').is(':hidden')) {
@@ -60,10 +60,10 @@
                         RemoteEmoji({appId: options.appKey})
                             .then(function (res) {
 
-                                $('#emotions').html('<div style="float:right"><a href="javascript:void(0);" id="prev">&laquo;</a><a href="javascript:void(0);" id="next">&raquo;</a></div><div class="categorys"></div><div class="container"></div><div class="page"></div>');
+                                $('#emotions').html('<div style="float:right"><a href="javascript:void(0);" id="prev">&laquo;</a><a href="javascript:void(0);" id="next">&raquo;</a></div><div class="categorys"></div><div class="emoji-container"></div><div class="page"></div>');
                                 var data = res.data.data;
                                 if (!angular.isArray(data)) {
-                                    $('#emotions .container').html(data.error);
+                                    $('#emotions .emoji-container').html(data.error);
                                     return false;
                                 }
                                 for (var i in data) {
@@ -114,13 +114,13 @@
                     function showEmotions() {
                         var category = arguments[0] ? arguments[0] : '默认';
                         var page = arguments[1] ? arguments[1] - 1 : 0;
-                        $('#emotions .container').html('');
+                        $('#emotions .emoji-container').html('');
                         $('#emotions .page').html('');
                         cat_current = category;
                         for (var i = page * 72; i < (page + 1) * 72 && i < emotions[category].length; ++i) {
-                            $('#emotions .container').append($('<a href="javascript:void(0);" title="' + emotions[category][i].name + '"><img src="' + emotions[category][i].icon + '" alt="' + emotions[category][i].name + '" width="22" height="22" /></a>'));
+                            $('#emotions .emoji-container').append($('<a href="javascript:void(0);" title="' + emotions[category][i].name + '"><img src="' + emotions[category][i].icon + '" alt="' + emotions[category][i].name + '" width="22" height="22" /></a>'));
                         }
-                        $('#emotions .container a').click(function (e) {
+                        $('#emotions .emoji-container a').click(function (e) {
                             e.stopPropagation();
                             cb($(this).attr('title'))
                             $('#emotions').hide();

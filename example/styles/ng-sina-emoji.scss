@@ -8,6 +8,7 @@ $color:#9ABBC8;
     background: $bg-color;
     position: absolute;
     border: 1px solid $boder-color;
+    z-index: 999999;
     a{
         color: $color;
         padding: 2px 7px;
@@ -39,7 +40,7 @@ $color:#9ABBC8;
             -webkit-border-radius: 3px;
         }
     }
-    .container{
+    .emoji-container{
         padding: 1px;
         overflow: hidden;
 
