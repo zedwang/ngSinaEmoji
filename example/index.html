@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="Demo">
+<head>
+    <meta charset="UTF-8">
+    <title>ng-sina-emoji-demo</title>
+    <!-- bower:css -->
+    <!-- endbower -->
+    <link rel="stylesheet" href="styles/ng-sina-emoji.css">
+</head>
+<body ng-controller="EmojiCtrl">
+<div style="width: 300px; margin: 100px auto;">
+    <form>
+        <textarea ng-model="emoji" ng-sina-emoji target="#emotion2" cols="50" rows="5"></textarea>
+        <button id="emotion">表情</button>
+        <button id="emotion2">表情</button>
+        <button id="emotion3">表情</button>
+        <button id="emotion4">表情</button>
+    </form>
+
+    {{emoji}}
+</div>
+
+
+<!-- bower:js -->
+<script src="bower_components/jquery/dist/jquery.js"></script>
+<script src="bower_components/angular/angular.js"></script>
+<!-- endbower -->
+<script src="scripts/ng-sina-emoji.js"></script>
+<script src="scripts/js.js"></script>
+</body>
+</html>
