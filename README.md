@@ -2,6 +2,9 @@
 整合新浪远程表情组件
 ####Useage
 ```js
+var Demo = angular.module('Demo',['ngSinaEmoji'])
+```
+```html
  <textarea ng-model="emoji" ng-sina-emoji target="#emotion2" app-key="1362404091" cols="50" rows="5"></textarea>
 <button id="emotion">表情</button>
 ```
