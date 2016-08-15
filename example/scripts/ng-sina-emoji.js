@@ -22,7 +22,6 @@
                     };
                     var options = $.extend({}, defaults, scope);
                     $(scope.target).click(function (ev) {
-                        console.log($(this).offset())
                         ev.stopPropagation();
                         SinaEmojiService.show(this,options,function (res) {
                             SinaEmojiService.insertText(elem[0],res,ctrl);
