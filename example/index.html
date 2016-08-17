@@ -11,12 +11,10 @@
 <div style="width: 300px; margin: 100px auto;">
     <form>
         <textarea ng-model="emoji" ng-sina-emoji target="#emotion2" cols="50" rows="5"></textarea>
-        <button id="emotion">表情</button>
         <button id="emotion2">表情</button>
-        <button id="emotion3">表情</button>
-        <button id="emotion4">表情</button>
     </form>
 
+    <button ng-click="destroy()">destroy</button>
     {{emoji}}
 </div>
 
@@ -26,6 +24,17 @@
 <script src="bower_components/angular/angular.js"></script>
 <!-- endbower -->
 <script src="scripts/ng-sina-emoji.js"></script>
-<script src="scripts/js.js"></script>
+<script>
+
+    var Demo = angular.module('Demo',['ngSinaEmoji'])
+
+        .controller('EmojiCtrl',function ($scope,SinaEmoji) {
+            $scope.emoji = '在这添加表情'
+            $scope.destroy = function(){
+                SinaEmoji.destroy();
+            }
+        })
+
+</script>
 </body>
 </html>

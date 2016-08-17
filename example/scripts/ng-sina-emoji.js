@@ -7,7 +7,7 @@
 
     angular.module('ngSinaEmoji',[])
 
-        .directive('ngSinaEmoji',['$document','SinaEmojiService',function ($document,SinaEmojiService) {
+        .directive('ngSinaEmoji',['$document','SinaEmoji',function ($document,SinaEmoji) {
             return {
                 restrict:'A',
                 require:'ngModel',
@@ -23,19 +23,19 @@
                     var options = $.extend({}, defaults, scope);
                     $(scope.target).click(function (ev) {
                         ev.stopPropagation();
-                        SinaEmojiService.show(this,options,function (res) {
-                            SinaEmojiService.insertText(elem[0],res,ctrl);
+                        SinaEmoji.show(this,options,function (res) {
+                            SinaEmoji.insertText(elem[0],res,ctrl);
                         });
                     })
 
                     $document.click(function () {
-                        SinaEmojiService.hide();
+                        SinaEmoji.hide();
                     })
 
                 }
             }
         }])
-        .factory('SinaEmojiService',['RemoteEmoji',function (RemoteEmoji) {
+        .factory('SinaEmoji',['RemoteEmoji',function (RemoteEmoji) {
 
             return {
                 show: function (elem, options, cb) {
@@ -141,6 +141,12 @@
                 },
                 hide: function () {
                     $('#emotions').hide();
+                },
+                destroy:function () {
+                    if ($('body').has('#emotions')) {
+                        $('#emotions').remove();
+                    }
+
                 },
                 insertText : function(target,text,ctrl){
                     if(target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA') {return;}
