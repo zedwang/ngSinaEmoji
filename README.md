@@ -36,3 +36,7 @@ var Demo = angular.module('Demo',['ngSinaEmoji'])
             }
         })
 ```
+```html
+// html
+<p ng-bind-html="emoji | parseEmotions"></p>
+```
