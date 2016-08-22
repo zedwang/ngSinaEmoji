@@ -15,7 +15,7 @@
     </form>
 
     <button ng-click="destroy()">destroy</button>
-    {{emoji}}
+    <p ng-bind-html="emoji | parseEmotions"></p>
 </div>
 
 
@@ -29,9 +29,14 @@
     var Demo = angular.module('Demo',['ngSinaEmoji'])
 
         .controller('EmojiCtrl',function ($scope,SinaEmoji) {
-            $scope.emoji = '在这添加表情'
+            $scope.emoji = '在这添加表情[右哼哼]'
             $scope.destroy = function(){
                 SinaEmoji.destroy();
+            }
+        })
+        .filter('parseEmotions',function (SinaEmoji,$sce) {
+            return function (value) {
+                return $sce.trustAsHtml(SinaEmoji.parseEmotions(value));
             }
         })
 

@@ -19,11 +19,20 @@ var Demo = angular.module('Demo',['ngSinaEmoji'])
 |  target  |          事件触发元素，必填         |
 |  appKey  |         新浪授权ID(可不填，有默认ID)          |
 #### Service
+
 ```js
         .controller('EmojiCtrl',function ($scope,SinaEmoji) {
             $scope.destroy = function(){
-            // 销毁实例
+                // 销毁实例
                 SinaEmoji.destroy();
+                // 解析表情
+                SinaEmoji.parseEmotions(value)
+            }
+        })
+        //常常使用过滤器来解析
+        .filter('parseEmotions',function (SinaEmoji,$sce) {
+            return function (value) {
+                return $sce.trustAsHtml(SinaEmoji.parseEmotions(value));
             }
         })
 ```

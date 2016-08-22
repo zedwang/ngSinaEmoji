@@ -5,9 +5,9 @@
 (function () {
     'use strict'
 
-    angular.module('ngSinaEmoji',[])
+    var emotionApp = angular.module('ngSinaEmoji',[])
 
-        .directive('ngSinaEmoji',['$document','SinaEmoji',function ($document,SinaEmoji) {
+    .directive('ngSinaEmoji',['$document','SinaEmoji','Constant',function ($document,SinaEmoji,Constant) {
             return {
                 restrict:'A',
                 require:'ngModel',
@@ -17,10 +17,8 @@
                 },
                 link:function (scope,elem, attr, ctrl) {
                     var $ = angular.element;
-                    var defaults = {
-                        appKey: '1362404091'
-                    };
-                    var options = $.extend({}, defaults, scope);
+                    Constant.setKey(scope.appKey);
+                    var options = {appKey:Constant.getKey()};
                     $(scope.target).click(function (ev) {
                         ev.stopPropagation();
                         SinaEmoji.show(this,options,function (res) {
@@ -35,15 +33,16 @@
                 }
             }
         }])
-        .factory('SinaEmoji',['RemoteEmoji',function (RemoteEmoji) {
+    .factory('SinaEmoji',['$window','RemoteEmoji','Constant',function ($window,RemoteEmoji,Constant) {
+            var $ = angular.element;
+            var cat_current;
+            var cat_page;
+            var emotions = new Array();
+            var categorys = new Array();
 
             return {
+
                 show: function (elem, options, cb) {
-                    var $ = angular.element;
-                    var cat_current;
-                    var cat_page;
-                    var emotions = new Array();
-                    var categorys = new Array();
                     var styles = {
                         top: $(elem).offset().top + $(elem).height() + 8,
                         left: $(elem).offset().left
@@ -56,39 +55,50 @@
 
                         $('#emotions').css(styles);
 
-                        RemoteEmoji({appId: options.appKey})
-                            .then(function (res) {
-
-                                $('#emotions').html('<div style="float:right"><a href="javascript:void(0);" id="prev">&laquo;</a><a href="javascript:void(0);" id="next">&raquo;</a></div><div class="categorys"></div><div class="emoji-container"></div><div class="page"></div>');
-                                var data = res.data.data;
-                                if (!angular.isArray(data)) {
-                                    $('#emotions .emoji-container').html(data.error);
-                                    return false;
-                                }
-                                for (var i in data) {
-                                    if (data[i].category == '') {
-                                        data[i].category = '默认';
-                                    }
-                                    if (emotions[data[i].category] == undefined) {
-                                        emotions[data[i].category] = new Array();
-                                        categorys.push(data[i].category);
-                                    }
-                                    emotions[data[i].category].push({name: data[i].phrase, icon: data[i].icon});
-                                }
-                                $('#emotions #prev').click(function (e) {
-                                    e.stopPropagation();
-                                    showCategorys(cat_page - 1);
-                                });
-                                $('#emotions #next').click(function (e) {
-                                    e.stopPropagation();
-                                    showCategorys(cat_page + 1);
-                                });
-                                showCategorys();
-                                showEmotions();
-                            })
+                        if ($window.localStorage.sinaEmotions) {
+                            var data = JSON.parse($window.localStorage.sinaEmotions);
+                            createDom(data);
+                        } else {
+                            RemoteEmoji._getRemoteEmotions({appId: Constant.getKey()})
+                                .then(function (res) {
+                                    createDom(res.data.data);
+                                })
+                        }
 
                     }
 
+
+                    function createDom(jsonData) {
+                        $('#emotions').html('<div style="float:right"><a href="javascript:void(0);" id="prev">&laquo;</a><a href="javascript:void(0);" id="next">&raquo;</a></div><div class="categorys"></div><div class="emoji-container"></div><div class="page"></div>');
+                        var data = jsonData;
+                        if (!angular.isArray(data)) {
+                            $('#emotions .emoji-container').html(data.error);
+                            return false;
+                        }
+                        // 写入缓存
+                        $window.localStorage.sinaEmotions = JSON.stringify(data);
+
+                        for (var i in data) {
+                            if (data[i].category == '') {
+                                data[i].category = '默认';
+                            }
+                            if (emotions[data[i].category] == undefined) {
+                                emotions[data[i].category] = new Array();
+                                categorys.push(data[i].category);
+                            }
+                            emotions[data[i].category].push({name: data[i].phrase, icon: data[i].icon});
+                        }
+                        $('#emotions #prev').click(function (e) {
+                            e.stopPropagation();
+                            showCategorys(cat_page - 1);
+                        });
+                        $('#emotions #next').click(function (e) {
+                            e.stopPropagation();
+                            showCategorys(cat_page + 1);
+                        });
+                        showCategorys();
+                        showEmotions();
+                    }
                     function showCategorys() {
                         var page = arguments[0] ? arguments[0] : 0;
                         if (page < 0 || page >= categorys.length / 5) {
@@ -109,7 +119,6 @@
                             }
                         });
                     }
-
                     function showEmotions() {
                         var category = arguments[0] ? arguments[0] : '默认';
                         var page = arguments[1] ? arguments[1] - 1 : 0;
@@ -148,6 +157,28 @@
                     }
 
                 },
+                parseEmotions: function (value) {
+                    var emotionsMap = {};
+
+                    if ($window.localStorage.sinaEmotions) {
+                        var data = JSON.parse($window.localStorage.sinaEmotions)
+                        generatorEmotionsMap(data)
+                    } else {
+                        RemoteEmoji._getRemoteEmotions({appId:Constant.getKey()}).then(function (res) {
+                            $window.localStorage.sinaEmotions = JSON.stringify(res.data.data);
+                            generatorEmotionsMap($window.localStorage.sinaEmotions)
+                        })
+                    }
+                    return RemoteEmoji._parseEmotions(value,emotionsMap)
+
+                    function generatorEmotionsMap(data) {
+                        for (var i = 0; i < data.length; i++) {
+                            var obj = data[i];
+                            emotionsMap[obj.phrase] = obj.icon;
+                        }
+                    }
+
+                },
                 insertText : function(target,text,ctrl){
                     if(target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA') {return;}
                     if (document.selection) {
@@ -174,9 +205,23 @@
 
             }
         }])
-        .provider('RemoteEmoji',function () {
+        .factory('Constant',function () {
+            var appKey = '1362404091';
+            return {
+                setKey:function (key) {
+                    if (key) {
+                        appKey = key;
+                    }
+                },
+                getKey : function () {
+                    return appKey;
+                }
+            }
+        })
+    .provider('RemoteEmoji',function () {
             this.$get = ['$http',function ($http) {
-                return function RemoteEmoji(params) {
+                return {
+                    _getRemoteEmotions: function (params) {
                         var url = 'https://api.weibo.com/2/emotions.json';
                         return $http({
                             method:'JSONP',
@@ -186,7 +231,32 @@
                                 callback:'JSON_CALLBACK'
                             }
                         })
+                    },
+                    _parseEmotions: function (value,_emotionsMap) {
+                        
+                        var html = value;
+                        html = html
+                            .replace(/<.*?>/g, function($1) {
+                                $1 = $1.replace('[', '[');
+                                $1 = $1.replace(']', ']');
+                                return $1;
+                            })
+                            .replace(
+                                /\[[^\[\]]*?\]/g,
+                                function($1) {
+                                    var url = _emotionsMap[$1];
+                                    if (url) {
+                                        return '<img class="sina-emotion" src="'
+                                            + url
+                                            + '" alt="'
+                                            + $1 + '" />';
+                                    }
+                                    return $1;
+                                });
+
+                        return html;
                     }
+                }
 
             }]
         })
