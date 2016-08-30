@@ -5,7 +5,11 @@
     "Zed <343650735@qq.com>"
   ],
   "description": "sina emoji components of Angular",
-  "main": "dist/ng-sina-emoji",
+  "main":
+  [
+      "dist/scripts/ng-sina-emoji.min.js",
+      "dist/styles/ng-sina-emoji.min.css"
+  ],
   "moduleType": [
     "es5"
   ],
