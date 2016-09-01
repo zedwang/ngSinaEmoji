@@ -26,6 +26,7 @@
     "tests"
   ],
   "dependencies": {
+    "ngSinaEmoji":"~",
     "angular": "1.4.1",
     "jquery": "~3.1.0"
   }

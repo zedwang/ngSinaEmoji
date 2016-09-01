@@ -21,8 +21,10 @@
                     var options = {appKey:Constant.getKey()};
                     $(scope.target).click(function (ev) {
                         ev.stopPropagation();
+                        scope.$emit('onEmojiShow');
                         SinaEmoji.show(this,options,function (res) {
                             SinaEmoji.insertText(elem[0],res,ctrl);
+                            scope.$emit('onEmojiLoaded');
                         });
                     })
 
@@ -233,7 +235,7 @@
                         })
                     },
                     _parseEmotions: function (value,_emotionsMap) {
-                        
+
                         var html = value;
                         html = html
                             .replace(/<.*?>/g, function($1) {
