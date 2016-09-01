@@ -23,6 +23,17 @@ var Demo = angular.module('Demo',['ngSinaEmoji'])
 | :--: | :--------------------: |
 |  target  |          事件触发元素，必填         |
 |  appKey  |         新浪授权ID(可不填，有默认ID)          |
+#### Events
+
+<code>onEmojiShow</code>在激活表情之前触发
+<code>onEmojiLoaded</code>在激活表情之后触发
+```js
+// example
+$rootScope.$on('onEmojiShow',function(){
+    // do Sth
+});
+```
+
 #### Service
 
 ```js
